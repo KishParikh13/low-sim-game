@@ -1,26 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import {useKey, useKeyPress} from 'react-use';
+import {useKey} from 'react-use';
 
 function App() {
 
-  let [playerPosition, setPlayerPosition] = useState({
-    x: 4,
-    y: 3
-  });
+  let [playerPosition, setPlayerPosition] = useState({x: 4, y: 3});
+  let [targetPosition, setTargetPosition] = useState({x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)});
+
+  let [score, setScore] = useState(0);
+  let [scoreAnimation, setScoreAnimation] = useState(false);
 
   const movePlayer = (x, y) => {
 
     let newX = playerPosition.x + x;
     let newY = playerPosition.y + y;
 
-    if (newX < 0 || newX > 7 || newY < 0 || newY > 7) {
-
-    } else {
+    if (newX < 0 || newX > 7 || newY < 0 || newY > 7) {} else {
       setPlayerPosition({
         x: newX,
         y: newY
       })
     }
+
+    if (newX === targetPosition.x && newY === targetPosition.y) {
+      moveTarget()
+    }
+  }
+
+  const moveTarget = () => {
+    setTargetPosition({
+      x: Math.floor(Math.random() * 8),
+      y: Math.floor(Math.random() * 8)
+    })
+
+
+    setScoreAnimation(true)
+    setTimeout(() => {
+      setScoreAnimation(false)
+      setScore(score + 1)
+    }, 500)
   }
 
   useKey('ArrowUp', () => movePlayer(0, -1), {}, [playerPosition]);
@@ -35,21 +52,30 @@ function App() {
 
   return (
     <div className=' '>
-    <section className='absolute bottom-0 right-0 bg-gray-800 h-1/4 w-1/4 text-white'>
-        { playerPosition.x }, {playerPosition.y}
-    </section>
+      <section className='absolute top-8 right-8 bg-gray-800  text-white'>
+        
+        Score: { score } <span className={' text-green-400 '  + (scoreAnimation ? ' opacity-100 ' : ' opacity-0 ')}> +1</span>
+      </section>
       <section className=' bg-gray-800 h-screen overflow-hidden  flex justify-center items-center'>
         {/* 8 by 8 table with rows and columns of equal size */}
-        <div id="board" className=' transition-all duration-500 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96'>
+        <div id="board" className={`transition-all duration-500 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96`}>
           {/* 64 squares */}
           {
             [...Array(64)].map((e, i) => {
               return (
-                <div key={i} className='w-12 h-12 border-2 border-black bg-white'>
+                <div key={i} className={`w-12 h-12  border-2 border-gray-200 bg-white`}>
                   {
                     // if the square is the player's position, render the player
                     playerPosition.x === i % 8 && playerPosition.y === Math.floor(i / 8) ?
-                      <div className='w-full h-full bg-red-500'></div>
+                      <div id="player" className='transition-all duration-500 w-full h-full bg-red-500'></div>
+                      :
+                      null
+                  }
+
+                  {
+                    // if the square is the target's position, render the taget
+                    targetPosition.x === i % 8 && targetPosition.y === Math.floor(i / 8) ?
+                      <div id="target" className='transition-all duration-500 w-full h-full bg-blue-500'></div>
                       :
                       null
                   }
@@ -63,9 +89,6 @@ function App() {
 
 
       </section>
-
-
-
     </div>
   );
 }
