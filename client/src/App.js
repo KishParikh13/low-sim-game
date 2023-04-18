@@ -9,6 +9,23 @@ function App() {
   let [score, setScore] = useState(0);
   let [scoreAnimation, setScoreAnimation] = useState(false);
 
+  let [hills, setHills] = useState([
+    {x: 0, y: 0},
+    {x: 1, y: 0},
+    {x: 1, y: 1},
+    {x: 1, y: 2},
+    {x: 1, y: 3},
+    {x: 2, y: 2},
+    {x: 2, y: 1},
+    {x: 3, y: 1},
+    {x: 0, y: 1},
+    {x: 2, y: 0},
+    {x: 3, y: 0},
+    {x: 4, y: 0},
+    {x: 5, y: 0},
+    {x: 6, y: 0},
+  ])
+
   const movePlayer = (x, y) => {
 
     let newX = playerPosition.x + x;
@@ -52,37 +69,34 @@ function App() {
 
   return (
     <div className=' '>
-      <section className='absolute top-8 right-8 bg-gray-800  text-white'>
+      <section className='absolute top-8 right-8 text-white'>
         
         Score: { score } <span className={' text-green-400 '  + (scoreAnimation ? ' opacity-100 ' : ' opacity-0 ')}> +1</span>
       </section>
-      <section className=' bg-gray-800 h-screen overflow-hidden  flex justify-center items-center'>
+      <section className=' bg-orange-800 h-screen overflow-hidden  flex justify-center items-center'>
         {/* 8 by 8 table with rows and columns of equal size */}
-        <div id="board" className={`transition-all duration-500 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96`}>
+        <div id="board" className={`transition-all duration-500 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96 shadow-2xl`}>
           {/* 64 squares */}
           {
             [...Array(64)].map((e, i) => {
-              return (
-                <div key={i} className={`w-12 h-12  border-2 border-gray-200 bg-white`}>
-                  {
-                    // if the square is the player's position, render the player
-                    playerPosition.x === i % 8 && playerPosition.y === Math.floor(i / 8) ?
-                      <div id="player" className='transition-all duration-500 w-full h-full bg-red-500'></div>
-                      :
-                      null
-                  }
-
-                  {
-                    // if the square is the target's position, render the taget
-                    targetPosition.x === i % 8 && targetPosition.y === Math.floor(i / 8) ?
-                      <div id="target" className='transition-all duration-500 w-full h-full bg-blue-500'></div>
-                      :
-                      null
-                  }
-                </div>
-              )
-            }
-            )
+              if (playerPosition.x === i % 8 && playerPosition.y === Math.floor(i / 8)) {
+                return (
+                  <div key={i} id="player" className='tall bg-red-500 ' />
+                )
+              } else if (targetPosition.x === i % 8 && targetPosition.y === Math.floor(i / 8))  {
+                return (
+                  <div key={i} id="target" className='transition-all duration-500 bg-blue-500' />             
+                )
+              } else if (hills.some(hill => hill.x === i % 8 && hill.y === Math.floor(i / 8))) {
+                return (
+                  <div key={i} className={`bg-green-500 `} />
+                )
+              } else {
+                return (
+                  <div key={i} className={`border border-gray-200 bg-white`} />
+                )
+              }
+            })
           }
         </div>
 
