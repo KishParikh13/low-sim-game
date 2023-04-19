@@ -43,3 +43,31 @@ code {
   transform:rotateY(90deg) translateX(3em) translateZ(-3em);
   box-shadow:inset -.1875em 0rem .375em rgba(0,0,0,.1);
 }
+
+.block.two{
+  transform: translateZ(6em);
+}
+
+.block.two:before{
+  height: 6em;
+  transform:rotateX(90deg) translateY(0em)  translateZ(3em) translateX(0em);
+}
+
+.block.two:after{
+  width: 6em;
+  transform:rotateY(90deg) translateX(6em) translateZ(-6em) translateY(0em);
+}
+
+.block.three{
+  transform: translateZ(9em);
+}
+
+.block.three:before{
+  height: 9em;
+  transform:rotateX(90deg) translateY(0em)  translateZ(6em) translateX(0em);
+}
+
+.block.three:after{
+  width: 9em;
+  transform:rotateY(90deg) translateX(9em) translateZ(-9em) translateY(0em);
+}
