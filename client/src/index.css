@@ -18,4 +18,28 @@ code {
 
 #board {
   transform: rotateX(60deg) rotateY(0deg) rotateZ(-45deg);
+  transform-style: preserve-3d;
+}
+
+.block{
+  transform-origin: 97% 97%;
+  position:relative;
+  box-shadow:.1875em .1875em .75em rgba(0,0,0,.09);
+  transform: translateZ(3em);
+  transform-style: preserve-3d;
+}
+.block:before, .block:after{
+  width: 3em;
+  height: 3em;
+  position: absolute;
+  transform-origin: 100% 100%;
+}
+.block:before{
+  transform:rotateX(90deg) translateY(0em) ;
+  box-shadow:inset 0em -.1875em 0.375em rgba(0,0,0,.1);
+}
+
+.block:after{
+  transform:rotateY(90deg) translateX(3em) translateZ(-3em);
+  box-shadow:inset -.1875em 0rem .375em rgba(0,0,0,.1);
 }

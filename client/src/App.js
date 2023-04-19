@@ -20,6 +20,9 @@ function App() {
     {x: 3, y: 1},
     {x: 0, y: 1},
     {x: 2, y: 0},
+    {x: 4, y: 6},
+    {x: 5, y: 6},
+    {x: 5, y: 5},
     {x: 3, y: 0},
     {x: 4, y: 0},
     {x: 5, y: 0},
@@ -31,7 +34,10 @@ function App() {
     let newX = playerPosition.x + x;
     let newY = playerPosition.y + y;
 
-    if (newX < 0 || newX > 7 || newY < 0 || newY > 7) {} else {
+    // check if new position is in bounds and not a hill
+    if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 &&
+      !hills.some(hill => hill.x === newX && hill.y === newY)
+    ) {
       setPlayerPosition({
         x: newX,
         y: newY
@@ -40,21 +46,25 @@ function App() {
 
     if (newX === targetPosition.x && newY === targetPosition.y) {
       moveTarget()
+
+      setScoreAnimation(true)
+      setTimeout(() => {
+        setScoreAnimation(false)
+        setScore(score + 1)
+      }, 500)
     }
   }
 
   const moveTarget = () => {
-    setTargetPosition({
-      x: Math.floor(Math.random() * 8),
-      y: Math.floor(Math.random() * 8)
-    })
+    // move target to a random position that is not a hill or the player
+    let newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
+    while (hills.some(hill => hill.x === newTargetPosition.x && hill.y === newTargetPosition.y) ||
+      (newTargetPosition.x === playerPosition.x && newTargetPosition.y === playerPosition.y)
+    ) {
+      newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
+    }
 
-
-    setScoreAnimation(true)
-    setTimeout(() => {
-      setScoreAnimation(false)
-      setScore(score + 1)
-    }, 500)
+    setTargetPosition(newTargetPosition)
   }
 
   useKey('ArrowUp', () => movePlayer(0, -1), {}, [playerPosition]);
@@ -81,15 +91,15 @@ function App() {
             [...Array(64)].map((e, i) => {
               if (playerPosition.x === i % 8 && playerPosition.y === Math.floor(i / 8)) {
                 return (
-                  <div key={i} id="player" className='tall bg-red-500 ' />
+                  <div key={i} id="player" className='block bg-orange-600 before:bg-orange-800 after:bg-orange-800 ' />
                 )
               } else if (targetPosition.x === i % 8 && targetPosition.y === Math.floor(i / 8))  {
                 return (
-                  <div key={i} id="target" className='transition-all duration-500 bg-blue-500' />             
+                  <div key={i} id="target" className='block bg-blue-600 before:bg-blue-800 after:bg-blue-800 transition-transform duration-500 ' />             
                 )
               } else if (hills.some(hill => hill.x === i % 8 && hill.y === Math.floor(i / 8))) {
                 return (
-                  <div key={i} className={`bg-green-500 `} />
+                  <div key={i} className={`block bg-green-600 before:bg-green-800 after:bg-green-800 `} />
                 )
               } else {
                 return (
