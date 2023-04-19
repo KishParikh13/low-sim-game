@@ -56,10 +56,12 @@ function App() {
   }
 
   const moveTarget = () => {
-    // move target to a random position that is not a hill or the player
+    // move target to a random position that is not a hill or the current player position
+
+    let originalPosition = targetPosition
     let newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
     while (hills.some(hill => hill.x === newTargetPosition.x && hill.y === newTargetPosition.y) ||
-      (newTargetPosition.x === playerPosition.x && newTargetPosition.y === playerPosition.y)
+      (newTargetPosition.x === originalPosition.x && newTargetPosition.y === originalPosition.y)
     ) {
       newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
     }
