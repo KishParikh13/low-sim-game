@@ -17,7 +17,6 @@ code {
 }
 
 #board {
-  transform: rotateX(60deg) rotateY(0deg) rotateZ(-45deg);
   transform-style: preserve-3d;
 }
 
