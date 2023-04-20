@@ -91,7 +91,9 @@ function App() {
   useKey('a', () => alert('"a" pressed'));
 
   useEffect(() => {
-    rotateBoard(60, 360, -45)
+    setTimeout(() => {
+      rotateBoard(60, 360, -45)
+    }, 500)
   }, []);
 
   return (
@@ -102,7 +104,7 @@ function App() {
       <section className='  bg-orange-800 h-screen overflow-hidden  flex justify-center items-center'>
         {/* 8 by 8 table with rows and columns of equal size */}
         <div className=''>
-          <div id="board" style={{transform: `rotateX(0deg) rotateY(360deg) rotateZ(0deg)`}} className={`  transition-all duration-1000 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96 shadow-2xl`}>
+          <div id="board" style={{transform: `rotateX(0deg) rotateY(360deg) rotateZ(0deg)`}} className={`  transition-all duration-1000 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96`}>
             {/* 64 squares */}
             {
               [...Array(64)].map((e, i) => {
