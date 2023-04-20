@@ -3,8 +3,9 @@ import {useKey} from 'react-use';
 
 function App() {
 
+  let boardSize = 20;
   let [playerPosition, setPlayerPosition] = useState({x: 4, y: 3});
-  let [targetPosition, setTargetPosition] = useState({x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)});
+  let [targetPosition, setTargetPosition] = useState({x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)});
 
   let [score, setScore] = useState(0);
   let [scoreAnimation, setScoreAnimation] = useState(false);
@@ -35,7 +36,7 @@ function App() {
     let newY = playerPosition.y + y;
 
     // check if new position is in bounds and not a hill
-    if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8 &&
+    if (newX >= 0 && newX < boardSize && newY >= 0 && newY < boardSize &&
       !hills.some(hill => hill.x === newX && hill.y === newY)
     ) {
       setPlayerPosition({
@@ -59,11 +60,11 @@ function App() {
     // move target to a random position that is not a hill or the current player position
 
     let originalPosition = targetPosition
-    let newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
+    let newTargetPosition = {x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)}
     while (hills.some(hill => hill.x === newTargetPosition.x && hill.y === newTargetPosition.y) ||
       (newTargetPosition.x === originalPosition.x && newTargetPosition.y === originalPosition.y)
     ) {
-      newTargetPosition = {x: Math.floor(Math.random() * 8), y: Math.floor(Math.random() * 8)}
+      newTargetPosition = {x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)}
     }
 
     setTargetPosition(newTargetPosition)
@@ -102,21 +103,20 @@ function App() {
         Score: { score } <span className={' text-green-400 '  + (scoreAnimation ? ' opacity-100 ' : ' opacity-0 ')}> +1</span>
       </section>
       <section className='  bg-orange-800 h-screen overflow-hidden  flex justify-center items-center'>
-        {/* 8 by 8 table with rows and columns of equal size */}
+        {/* boardSize by boardSize table with rows and columns of equal size */}
         <div className=''>
-          <div id="board" style={{transform: `rotateX(0deg) rotateY(360deg) rotateZ(0deg)`}} className={`  transition-all duration-1000 grid grid-cols-8 grid-rows-8 gap-0 w-96 h-96`}>
-            {/* 64 squares */}
+          <div id="board" style={{transform: `rotateX(0deg) rotateY(360deg) rotateZ(0deg)`, gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${boardSize}, minmax(0, 1fr))`, height: `${(boardSize*12)/4}rem`, width: `${(boardSize*12)/4}rem`}} className={`  transition-all duration-1000 grid `}>
             {
-              [...Array(64)].map((e, i) => {
-                if (playerPosition.x === i % 8 && playerPosition.y === Math.floor(i / 8)) {
+              [...Array(boardSize*boardSize)].map((e, i) => {
+                if (playerPosition.x === i % boardSize && playerPosition.y === Math.floor(i / boardSize)) {
                   return (
                     <div key={i} id="player" className='block bg-orange-600 before:bg-orange-800 after:bg-red-700 ' />
                   )
-                } else if (targetPosition.x === i % 8 && targetPosition.y === Math.floor(i / 8))  {
+                } else if (targetPosition.x === i % boardSize && targetPosition.y === Math.floor(i / boardSize))  {
                   return (
                     <div key={i} id="target" className='block bg-blue-600 before:bg-blue-900 after:bg-blue-800 transition-transform duration-500 ' />             
                   )
-                } else if (hills.some(hill => hill.x === i % 8 && hill.y === Math.floor(i / 8))) {
+                } else if (hills.some(hill => hill.x === i % boardSize && hill.y === Math.floor(i / boardSize))) {
                   return (
                     <div key={i} className={`block bg-green-600 before:bg-green-800 after:bg-cyan-600 `} />
                   )
