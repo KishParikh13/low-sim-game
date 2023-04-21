@@ -3,32 +3,38 @@ import {useKey} from 'react-use';
 
 function App() {
 
-  let boardSize = 20;
-  let [playerPosition, setPlayerPosition] = useState({x: 4, y: 3});
+  let boardSize = 30;
+  let [playerPosition, setPlayerPosition] = useState({x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)});
   let [targetPosition, setTargetPosition] = useState({x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)});
 
   let [score, setScore] = useState(0);
   let [scoreAnimation, setScoreAnimation] = useState(false);
 
-  let [hills, setHills] = useState([
-    {x: 0, y: 0},
-    {x: 1, y: 0},
-    {x: 1, y: 1},
-    {x: 1, y: 2},
-    {x: 1, y: 3},
-    {x: 2, y: 2},
-    {x: 2, y: 1},
-    {x: 3, y: 1},
-    {x: 0, y: 1},
-    {x: 2, y: 0},
-    {x: 4, y: 6},
-    {x: 5, y: 6},
-    {x: 5, y: 5},
-    {x: 3, y: 0},
-    {x: 4, y: 0},
-    {x: 5, y: 0},
-    {x: 6, y: 0},
-  ])
+  let [hills, setHills] = useState([])
+
+
+  let generateHills = () => {
+    // generate hills in a semi random pattern where they are grouped together
+    let newHills = []
+    for (let i = 0; i < boardSize*1.5; i++) {
+      let x = Math.floor(Math.random() * boardSize)
+      let y = Math.floor(Math.random() * boardSize)
+      newHills.push({x, y})
+    }
+    setHills(newHills)
+
+    // add a class of 'two' to some of the hills randomly  (the divs with a class of block and bg-green)
+    setTimeout(() => {
+      document.querySelectorAll('.block.bg-green-600').forEach(hill => {
+        if (Math.random() > 0.8) {
+          hill.classList.add('two')
+        }
+        if (Math.random() > 0.9) {
+          hill.classList.add('three')
+        }
+      })
+    }, 1000)
+  }
 
   const movePlayer = (x, y) => {
 
@@ -81,9 +87,7 @@ function App() {
     document.getElementById("board").style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`
   }
 
-  // usekey on spacebar
-  useKey(' ', () => {
-    rotateBoard(0, 360, 0)
+    generateHills()
     setTimeout(() => {
       rotateBoard(60, 360, -45)
     }, 1500)
@@ -92,6 +96,7 @@ function App() {
   useKey('a', () => alert('"a" pressed'));
 
   useEffect(() => {
+    generateHills()
     setTimeout(() => {
       rotateBoard(60, 360, -45)
     }, 500)
@@ -118,7 +123,7 @@ function App() {
                   )
                 } else if (hills.some(hill => hill.x === i % boardSize && hill.y === Math.floor(i / boardSize))) {
                   return (
-                    <div key={i} className={`block bg-green-600 before:bg-green-800 after:bg-cyan-600 `} />
+                    <div key={i} className={`block bg-green-600 before:bg-green-800 after:bg-cyan-600 transition-transform duration-500 `} />
                   )
                 } else {
                   return (
