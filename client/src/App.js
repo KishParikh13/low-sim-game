@@ -87,13 +87,15 @@ function App() {
     document.getElementById("board").style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`
   }
 
+  let resetBoard = () => {
+    setScore(0)
     generateHills()
-    setTimeout(() => {
-      rotateBoard(60, 360, -45)
-    }, 1500)
-  }, {}, []);
+    moveTarget()
 
-  useKey('a', () => alert('"a" pressed'));
+    setTimeout(() => {
+      rotateBoard(1,60,360,-45)
+    }, 1000)
+  }
 
   useEffect(() => {
     generateHills()
@@ -104,9 +106,19 @@ function App() {
 
   return (
     <div className=' '>
-      <section className='absolute top-8 right-8 text-white'>
-        Score: { score } <span className={' text-green-400 '  + (scoreAnimation ? ' opacity-100 ' : ' opacity-0 ')}> +1</span>
+      <section className='absolute top-8 right-8 flex gap-2'>
+        {/* refresh button */}
+        <button onClick={() => resetBoard()} type="button" className='text-2xl font-bold text-white px-4 py-2 bg-black bg-opacity-20 rounded-md'>
+          {/* refresh icon */}
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+        </button>
+        <div className='text-2xl font-bold text-white px-6 py-2 bg-black bg-opacity-20 rounded-md'>
+          Score: { score }
+        </div>
       </section>
+      
       <section className='  bg-orange-800 h-screen overflow-hidden  flex justify-center items-center'>
         {/* boardSize by boardSize table with rows and columns of equal size */}
         <div className=''>
