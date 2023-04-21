@@ -12,6 +12,17 @@ function App() {
 
   let [hills, setHills] = useState([])
 
+  let [translate, setTranslate] = useState({
+    translateX: 0,
+    translateY: 0,
+  })
+
+  let [boardTransform, setBoardTransform] = useState({
+    scale: 0.75,
+    rotateX: 0,
+    rotateY: 360,
+    rotateZ: 0,
+  })
 
   let generateHills = () => {
     // generate hills in a semi random pattern where they are grouped together
@@ -49,15 +60,16 @@ function App() {
         x: newX,
         y: newY
       })
+      moveBoard(newX, newY)
     }
 
     if (newX === targetPosition.x && newY === targetPosition.y) {
       moveTarget()
 
+      setScore(score + 1)
       setScoreAnimation(true)
       setTimeout(() => {
         setScoreAnimation(false)
-        setScore(score + 1)
       }, 500)
     }
   }
@@ -76,21 +88,33 @@ function App() {
     setTargetPosition(newTargetPosition)
   }
 
-  useKey('ArrowUp', () => movePlayer(0, -1), {}, [playerPosition]);
-  useKey('ArrowDown', () => movePlayer(0, 1), {}, [playerPosition]);
-  useKey('ArrowLeft', () => movePlayer(-1, 0), {}, [playerPosition]);
-  useKey('ArrowRight', () => movePlayer(1, 0), {}, [playerPosition]);
-
-  const rotateBoard = (x, y, z) => {
-    // let newRotation = rotation + z
-    // setRotation(newRotation)
-    document.getElementById("board").style.transform = `rotateX(${x}deg) rotateY(${y}deg) rotateZ(${z}deg)`
+  // move board to correspond with player position
+  const moveBoard = (x, y) => {
+    setTranslate({
+      translateX: ((-x -y) * 10) + (boardSize*10),
+      translateY: ((-y +x) * 10) + (boardSize*5),
+    })
   }
+
+  // rotate the board
+  const rotateBoard = (scale, x, y, z) => {
+    setBoardTransform({
+      scale: scale,
+      rotateX: x,
+      rotateY: y,
+      rotateZ: z,
+    })
+  }
+
+  //create a variable to store the scale down size
+  // it should be a decimal between 0 and 1, larger for smaller board sizes and smaller for larger board sizes
+  let boardScaleDownSize = 1.0 - (boardSize * 0.02)
 
   let resetBoard = () => {
     setScore(0)
     generateHills()
     moveTarget()
+    moveBoard(playerPosition.x, playerPosition.y)
 
     setTimeout(() => {
       rotateBoard(1,60,360,-45)
@@ -99,10 +123,29 @@ function App() {
 
   useEffect(() => {
     generateHills()
+    moveTarget()
+
     setTimeout(() => {
-      rotateBoard(60, 360, -45)
-    }, 500)
+      rotateBoard(1,60,360,-45)
+      moveBoard(playerPosition.x, playerPosition.y)
+    }, 1000)
   }, []);
+
+  // usekey to change view
+  useKey('v', () => {
+    rotateBoard(boardScaleDownSize,0,360,0)
+    moveBoard(0, 0)
+
+    setTimeout(() => {
+      rotateBoard(1,60,360,-45)
+      moveBoard(playerPosition.x, playerPosition.y)
+    }, 1500)
+  }, {}, []);
+
+  useKey('ArrowUp', () => movePlayer(0, -1), {}, [playerPosition]);
+  useKey('ArrowDown', () => movePlayer(0, 1), {}, [playerPosition]);
+  useKey('ArrowLeft', () => movePlayer(-1, 0), {}, [playerPosition]);
+  useKey('ArrowRight', () => movePlayer(1, 0), {}, [playerPosition]);
 
   return (
     <div className=' '>
@@ -121,8 +164,17 @@ function App() {
       
       <section className='  bg-orange-800 h-screen overflow-hidden  flex justify-center items-center'>
         {/* boardSize by boardSize table with rows and columns of equal size */}
-        <div className=''>
-          <div id="board" style={{transform: `rotateX(0deg) rotateY(360deg) rotateZ(0deg)`, gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${boardSize}, minmax(0, 1fr))`, height: `${(boardSize*12)/4}rem`, width: `${(boardSize*12)/4}rem`}} className={`  transition-all duration-1000 grid `}>
+        <div style={{transform: ` translateX(${translate.translateX}px) translateY(${translate.translateY}px)`}} className=' transition-transform duration-200 '>
+          <div
+            id="board"
+            className={`  transition-all duration-1000 grid `}
+            style={{
+              transform: `scale(${boardTransform.scale}) rotateX(${boardTransform.rotateX}deg) rotateY(${boardTransform.rotateY}deg) rotateZ(${boardTransform.rotateZ}deg)`,
+              gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`,
+              gridTemplateRows: `repeat(${boardSize}, minmax(0, 1fr))`,
+              height: `${(boardSize*12)/4}rem`,
+              width: `${(boardSize*12)/4}rem`}}
+          >
             {
               [...Array(boardSize*boardSize)].map((e, i) => {
                 if (playerPosition.x === i % boardSize && playerPosition.y === Math.floor(i / boardSize)) {
