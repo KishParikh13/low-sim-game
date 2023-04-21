@@ -3,7 +3,7 @@ import {useKey} from 'react-use';
 
 function App() {
 
-  let boardSize = 30;
+  let boardSize = 15;
   let [playerPosition, setPlayerPosition] = useState({x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)});
   let [targetPosition, setTargetPosition] = useState({x: Math.floor(Math.random() * boardSize), y: Math.floor(Math.random() * boardSize)});
 
